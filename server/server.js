@@ -1,9 +1,34 @@
-var mongoose = require('mongoose');
-mongoose.Promise = global.Promise;
-mongoose.connect('mongodb://localhost:27017/TodoAppMongoose');
+var express = require('express');
+var bodyParser = require('body-parser');
 
 
-var user = mongoose.model('user',{
+var mongoose = require('./db/mongoose');
+var todo = require('./models/todo');
+var user = require('./models/user');
+
+var app = express();
+
+
+app.use(bodyParser.json()); // Middleware
+
+// Add  route to create a todo
+app.post('/todos',(req,res) => {
+	console.log(req.body);
+	var newTodo = new todo.todo({
+		text:req.body.text
+	});
+	newTodo.save().then((docs) => {
+		res.send(docs);
+	}, (error) => {
+		res.status(400).send(error);
+	});
+});
+
+app.listen(3000, () => {
+	console.log('Started on port 3000');
+});
+
+/*var user = mongoose.model('user',{
 	email:{
 		type:String
 		,required:true
@@ -20,7 +45,7 @@ newUser.save().then((user) => {
 	console.log('New user created :', user);
 }, (err) => {
 	console.log(err);
-})
+})*/
 
 /*var Todo = mongoose.model('Todo',{
 	text:{
